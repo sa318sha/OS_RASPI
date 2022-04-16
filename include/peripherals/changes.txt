@@ -1,0 +1,1 @@
+may want to have seperate folders for the base things like memory and io and then different thing for the peripherals that use them
