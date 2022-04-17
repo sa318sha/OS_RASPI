@@ -1,16 +1,18 @@
 # CFILES = $(wildcard *.c)
 # OFILES = $(CFILES:.c=.o)
 # -nostdinc -nostdlib
-GCCFLAGS = -Wall -O2 -ffreestanding  -nostartfiles -mgeneral-regs-only
-GCCPATH = ~/compiler/gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf/bin
+RPIVERSION ?= 4
 
+BOOTMNT ?= /media/sasha/boot
 
-HEADER_DIR = -I include 
+ARMGNU ?= aarch64-linux-gnu
 
+C_OPTIONS = -Wall -O2 -ffreestanding  -nostartfiles -mgeneral-regs-only -I include -nostdlib
+
+ASM_OPTIONS = -I include
 
 BUILD_DIR = build
 SRC_DIR = src
-INCLUDE = include
 
 all: kernel8.img
 
@@ -19,30 +21,31 @@ clean:
 	-rm kernel8.img
 
 
-
-C_FILES = $(wildcard src/*.c) 
-
-ASM_FILES = $(wildcard $(SRC_DIR)/*.s)
-OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.s=$(BUILD_DIR)/%.o)
-
-
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.s
-	@echo ${OBJ_FILES}
+$(BUILD_DIR)/%_s.o: $(SRC_DIR)/%.S
 	mkdir -p $(@D)
-	$(GCCPATH)/aarch64-none-elf-gcc ${HEADER_DIR} $(GCCFLAGS) -MMD -c $< -o $@
+	$(ARMGNU)-gcc $(ASM_OPTIONS) -MMD -c $< -o $@
 
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
 #@echo fiuubefiashfbibfhsofisuuisfbie ${C_files}
 	mkdir -p $(@D)
 
-	$(GCCPATH)/aarch64-none-elf-gcc ${HEADER_DIR} $(GCCFLAGS) -MMD -c $< -o $@
+	$(ARMGNU)-gcc $(C_OPTIONS) -MMD -c $< -o $@
 
+# they dont actually exists there just place holder for the kernel8.img
+C_FILES = $(wildcard $(SRC_DIR)/*.c) 
+ASM_FILES = $(wildcard $(SRC_DIR)/*.S)
+OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
+OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.S=$(BUILD_DIR)/%_s.o)
+
+DEP_FILES = ${OBJ_FILES:%.o=%.d}
 
 
 #fix this
 kernel8.img: linker/linker.ld ${OBJ_FILES} #$(OFILES)
-	$(GCCPATH)/aarch64-none-elf-ld -nostdlib -T linker/linker.ld -o ${BUILD_DIR}/kernel8.elf ${OBJ_FILES}  
-	$(GCCPATH)/aarch64-none-elf-objcopy ${BUILD_DIR}/kernel8.elf -O binary kernel8.img
+	$(ARMGNU)-ld -T linker/linker.ld -o ${BUILD_DIR}/kernel8.elf ${OBJ_FILES}  
+	$(ARMGNU)-objcopy ${BUILD_DIR}/kernel8.elf -O binary kernel8.img
+	cp kernel8.img ${BOOTMNT}/kernel8.img
+	cp config.txt ${BOOTMNT}/config.txt
+
 

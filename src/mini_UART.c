@@ -1,5 +1,5 @@
-#include "mini_UART_definitions.h"
-#include "mm.h"
+#include "mini_UART.h"
+#include "io.h"
 #include "gpio.h"
 
 void uart_init(){

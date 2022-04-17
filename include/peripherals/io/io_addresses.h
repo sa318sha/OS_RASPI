@@ -1,11 +1,36 @@
-#ifndef GPIO_FILE
-#define GPIO_FILE
+#pragma once
 
-#include "base_addresses.h"
+#include "common.h"
+#include "peripherals/base_addresses.h"
 // #include "include/register_structs.h"
 
-#define GPIO_BASE (MAIN_PERIPHERALS + 0x2200000)
+#define GPIO_BASE (PBASE + 0x00200000)
 //mini UART
+
+typedef struct GPIOPinData{
+    vol32 reserved;
+    vol32 data[2];
+}GPIOPinData;
+
+struct GPIORegs{
+    vol32 GPFSEL[6];
+    GPIOPinData GPFSET;
+    
+    GPIOPinData GPCLR;
+    GPIOPinData GPLEV;
+    GPIOPinData GPED;
+    GPIOPinData GPREN;
+    GPIOPinData GPFEN;
+    GPIOPinData GPHEN;
+    GPIOPinData GPLEN;
+    GPIOPinData GPAREN;
+    GPIOPinData GPAFEN;
+    vol32 reserved;
+    vol32 GPIO_PUP_PDN_CNTRL_REG[4];
+
+};
+
+#define GPIO_REG ((struct GPIOREGS*)(GPIO_BASE)) 
 
 #define GPFSEL0 (GPIO_BASE + 0x00)
 #define GPFSEL1 (GPIO_BASE + 0x04)
@@ -57,5 +82,3 @@ unsigned int gpio_clear   (unsigned int pin_number, unsigned int value);
 unsigned int gpio_pull    (unsigned int pin_number, unsigned int value);
 unsigned int gpio_select_alternate(unsigned int pinNumber, unsigned int value);
 
-
-#endif 
