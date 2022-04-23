@@ -1,30 +1,31 @@
 #pragma once
 
-#include "common.h"
+#include "util/common.h"
 #include "peripherals/base_addresses.h"
 #define AUX_BASE (PBASE + 0x00215000)
 //mini UART
 struct AuxRegs {
-    vol32 irq_status;
-    vol32 enables;
+    vol32 AUX_IRQ;
+    vol32 AUX_ENABLES;
     vol32 reserved[14];
-    vol32 mu_io;
-    vol32 mu_ier;
-    vol32 mu_lcr;
-    vol32 mu_lcr;
-    vol32 mu_mcr;
-    vol32 mu_lsr;
-    vol32 mu_scrtch;
-    vol32 mu_cntl;
-    vol32 mu_stat;
-    vol32 mu_baud;
+    vol32 AUX_MU_IO;
+    vol32 AUX_MU_IER;
+    vol32 AUX_MU_IIR;
+    vol32 AUX_MU_LCR;
+    vol32 AUX_MU_MCR;
+    vol32 AUX_MU_LSR;
+    vol32 AUX_MU_MSR;
+    vol32 AUX_MU_SCRATCH;
+    vol32 AUX_MU_CNTL;
+    vol32 AUX_MU_STAT;
+    vol32 AUX_MU_BAUD;
 
 };
 
 
 #define REGS_AUX ((struct AuxRegs *)(AUX_BASE))
-
-
+#define SYSTEM_CLOCK_FREQUENCY 500000000
+#define AUX_MU_BAUD_RATE(baud) (SYSTEM_CLOCK_FREQUENCY/(8*baud)-1)
 
 
 

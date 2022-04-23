@@ -1,10 +1,10 @@
-#include "io.h"
+// #include "mm/basic_mm.h"
 
-// void test(void * a, char b){
-//      *(volatile unsigned int*)a = b;
+// // void test(void * a, char b){
+// //      *(volatile unsigned int*)a = b;
+// // }
+
+// void mm_write(vol64 reg, vol32 val) {
+//      *(vol32 *)reg = val; 
 // }
-
-void mmio_write(unsigned long reg, unsigned int val) {
-     *(volatile unsigned int *)reg = val; 
-}
-unsigned int mmio_read(long reg) { return *(volatile unsigned int *)reg; }
+// u32 mm_read(vol64 reg) { return *(vol32 *)reg; }

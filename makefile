@@ -7,7 +7,7 @@ BOOTMNT ?= /media/sasha/boot
 
 ARMGNU ?= aarch64-linux-gnu
 
-C_OPTIONS = -Wall -O2 -ffreestanding  -nostartfiles -mgeneral-regs-only -I include -nostdlib
+C_OPTIONS = -Wall -O2 -ffreestanding  -nostartfiles -mgeneral-regs-only -I include 
 
 ASM_OPTIONS = -I include
 

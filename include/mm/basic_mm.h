@@ -1,4 +1,4 @@
 #pragma once
-#include "common.h"
-void mmio_write(vol64 reg, vol32 val);
-unsigned int mmio_read(vol32 reg);
+#include "util/common.h"
+void mm_write(vol64 reg, vol32 val);
+u32 mm_read(vol64 reg);

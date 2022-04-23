@@ -5,13 +5,15 @@ SECTIONS
     .rodata : { *(.rodata .rodata.* .gnu.linkonce.r*) }
     PROVIDE(_data = .);
     .data : { *(.data .data.* .gnu.linkonce.d*) }
-    .bss (NOLOAD) : {
-        . = ALIGN(16);
-        __bss_start = .;
-        *(.bss .bss.*)
-        *(COMMON)
-        __bss_end = .;
-    }
+    . = ALIGN(16);
+    /* .bss (NOLOAD) : { */
+        /* . = ALIGN(16); */
+    __bss_start = .;
+
+    .bss : { *(.bss .bss.*) }
+    /* *(COMMON) */
+    __bss_end = .;
+    /* } */
     _end = .;
 
    /DISCARD/ : { *(.comment) *(.gnu*) *(.note*) *(.eh_frame*) }

@@ -1,35 +1,60 @@
-#include "mini_UART.h"
-#include "io.h"
-#include "gpio.h"
+#include "peripherals/aux/aux_addresses.h"
+#include "peripherals/aux/mini_UART/mini_UART.h"
+#include "util/common.h"
+#include "mm/basic_mm.h"
+#include "peripherals/io/gpio/gpio.h"
+
+#define TXD_mini_UART 14
+#define RXD_mini_UART 15
 
 void uart_init(){
-    mmio_write(AUX_ENABLES, 1); //enable UART1
-    mmio_write(AUX_MU_IER_REG, 0);
-    mmio_write(AUX_MU_CNTL_REG, 0);
-    mmio_write(AUX_MU_LCR_REG, 3); //8 bits
-    mmio_write(AUX_MU_MCR_REG, 0);
-    mmio_write(AUX_MU_IER_REG, 0);
-    mmio_write(AUX_MU_IIR_REG, 0xC6); //disable interrupts
-    mmio_write(AUX_MU_BAUD_REG, AUX_MU_BAUD_RATE(115200));
-    gpio_select(14,5);
-    gpio_select(15,5);
-    mmio_write(AUX_MU_CNTL_REG, 3); //enable RX/TX
+    REGS_AUX->AUX_ENABLES =1;
+    REGS_AUX->AUX_MU_CNTL =0;
+    REGS_AUX->AUX_MU_IER =0;
+    REGS_AUX->AUX_MU_LCR =3; // 8 bit transimitting
+    REGS_AUX->AUX_MU_MCR =0; // 8 bit transimitting
+    
+    REGS_AUX->AUX_MU_IER=0;
+    REGS_AUX->AUX_MU_IIR = 0xC6; //disable interrupts
+    REGS_AUX->AUX_MU_BAUD = AUX_MU_BAUD_RATE(115200);
+    // REGS_AUX->AUX_MU_IER
+    // mm_write(&REGS_AUX->AUX_ENABLES, 1); //enable UART1
+    // mm_write(&REGS_AUX->AUX_MU_IER, 0);
+    // mm_write(&REGS_AUX->AUX_MU_CNTL, 0);
+    // mm_write(&REGS_AUX->AUX_MU_LCR, 3); //8 bits
+    // mm_write(&REGS_AUX->AUX_MU_MCR, 0);
+    // mm_write(&REGS_AUX->AUX_MU_IER, 0);
+    // mm_write(&REGS_AUX->AUX_MU_IIR, 0xC6); //disable interrupts
+    // mm_write(&REGS_AUX->AUX_MU_BAUD, AUX_MU_BAUD_RATE(115200));
+    gpio_pin_resistor_enable(TXD_mini_UART,GPNORES);
+    gpio_pin_resistor_enable(RXD_mini_UART,GPNORES);
+    gpio_pin_set_func(TXD_mini_UART,GFAlt5);
+    gpio_pin_set_func(RXD_mini_UART,GFAlt5);
 
+    
+    // mm_write(&REGS_AUX->AUX_MU_CNTL, 3); //enable RX/TX
+    REGS_AUX->AUX_MU_CNTL =3;
+    uart_writeByte('\r');
+    uart_writeByte('\n');
+    uart_writeByte('\n');
 }
 void uart_write(char *buffer){
     while (*buffer != '\0') {
-       if (*buffer == '\n') uart_writeByte('\r');
+       if (*buffer == '\n'){
+           uart_writeByte('\r');
+       } 
        uart_writeByte(*buffer);
        buffer++;
     }
 }
-unsigned int uart_isWriteByteReady() { return mmio_read(AUX_MU_LSR_REG) & 0x20; }
-unsigned int uart_isReadByteReady() { return mmio_read(AUX_MU_LSR_REG) & 0x01; }
+// unsigned int uart_isWriteByteReady() { return mm_read(&REGS_AUX->AUX_MU_LSR) & 0x20; }
+// unsigned int uart_isReadByteReady() { return mm_read(&REGS_AUX->AUX_MU_LSR) & 0x01; }
 
 
-void uart_writeByte(unsigned char ch) {
-    while (!uart_isWriteByteReady()); 
-    mmio_write(AUX_MU_IO_REG, (unsigned int)ch);
+
+void uart_writeByte(char ch) {
+    while (!(REGS_AUX->AUX_MU_LSR & 0x20)); 
+    REGS_AUX->AUX_MU_IO = ch;
 }
 
 void uart_putc(void *p, char c){
@@ -37,6 +62,9 @@ void uart_putc(void *p, char c){
 }
 
 char uart_readByte(){
-    while(!uart_isReadByteReady());
-    return (mmio_read(AUX_MU_IO_REG)&0xFF);
+    
+    while (!(volatile char)(REGS_AUX->AUX_MU_LSR & 0x01));//{
+    //     uart_writeByte('a');
+    // }
+    return (REGS_AUX->AUX_MU_IO & 0xFF);
 }
