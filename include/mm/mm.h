@@ -10,7 +10,7 @@
 #define LOW_MEMORY              	(2 * SECTION_SIZE)
 
 #ifndef __ASSEMBLER__
-#include "util/common.h"
+// #include "util/common.h"
 // void memzero(unsigned long src, unsigned long n);
 // unsigned long allocPage();
 // void freePage(unsigned long);

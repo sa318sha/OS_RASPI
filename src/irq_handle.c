@@ -33,24 +33,28 @@ void show_invalid_entry_message(u64 type, u64 status, u64 address){
 }
 
 void enable_interrupt_controller(){
+
+    //setting only the aux for now
     IRQ_ARMC_REGS->PROCESSOR[0].IRQ_SET_EN[0] = AUX_IRQ;
 }
 void handle_irq(){
-    u32 irq;
+    u64 irq;
 
     irq = IRQ_ARMC_REGS->PROCESSOR[0].IRQ_PENDING[0];
-
+    printf("IRQ VALUES: %X\n",irq);
     while(irq){
         if(irq & AUX_IRQ){
-            irq &= ~AUX_IRQ;
-            printf("handling AUX_IRQ\n");
-            while(REGS_AUX->AUX_MU_IIR & 4 ){
-                printf("UART RECIEVED");
-                uart_writeByte(uart_readByte());
-                printf("\n");
-            }
+        irq &= ~AUX_IRQ;
+        printf("recieved byte: %X",(REGS_AUX->AUX_MU_IO & 0xFF));
+        while((REGS_AUX->AUX_MU_IIR & 4)==4 ){
+            printf("UART RECIEVED: ");
+            uart_writeByte(uart_readByte());
+            printf("\n");
+        }
 
         }
     }
+    
+    
 
 }

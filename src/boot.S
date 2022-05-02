@@ -1,8 +1,8 @@
 #include "arm/sysregs.h"
-; #include "mm/mm.h"
+#include "mm/mm.h"
 
 .section ".text.boot"  // Make sure the linker puts this at the start of the kernel image
-.text
+
 .global _start  // Execution starts here
 
 _start:

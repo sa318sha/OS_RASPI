@@ -3,6 +3,8 @@
 #include "util/common.h"
 #include "mm/basic_mm.h"
 #include "peripherals/gpio.h"
+#include "mm/utils.h"
+#include "util/printf.h"
 
 #define TXD_mini_UART 14
 #define RXD_mini_UART 15
@@ -15,28 +17,19 @@ void uart_init(){
     gpio_pin_resistor_enable(RXD_mini_UART,GPNORES);
     
 
-    REGS_AUX->AUX_ENABLES =1;
-    REGS_AUX->AUX_MU_CNTL =0;
-    REGS_AUX->AUX_MU_IIR =2;
-    REGS_AUX->AUX_MU_LCR =3; // 8 bit transimitting
-    REGS_AUX->AUX_MU_MCR =0; // 8 bit transimitting
+    REGS_AUX->AUX_ENABLES =1;   //enables mini_uart
+    REGS_AUX->AUX_MU_CNTL =0;   //disables transmission-recieving bits
+    REGS_AUX->AUX_MU_IER =0xD;    //1st (0) bit enables recieve interrupt 2nd bit enables transmit (1) (swapped order from datasheet)
+    // REGS_AUX->AUX_MU_IIR =0xC6; //can be ommited - bit 1:2 are clearing transmit and recieve fifo, bit 0 is check if there is interrupt pending bit 7:6 are read only
+                                //for checking if the FIFO of transmit and recieve are enabled
+                                //will clear them one of the tutoirals had this value as 0xC6
+    REGS_AUX->AUX_MU_LCR =3; // 8 bit transimitting -must be 3 to have it working 
+    REGS_AUX->AUX_MU_MCR =0; // setst he recieve line to high by default
     
     // REGS_AUX->AUX_MU_IIR = 0xC6; //disable interrupts
     REGS_AUX->AUX_MU_BAUD = AUX_MU_BAUD_RATE(115200);
-    // REGS_AUX->AUX_MU_IER
-    // mm_write(&REGS_AUX->AUX_ENABLES, 1); //enable UART1
-    // mm_write(&REGS_AUX->AUX_MU_IER, 0);
-    // mm_write(&REGS_AUX->AUX_MU_CNTL, 0);
-    // mm_write(&REGS_AUX->AUX_MU_LCR, 3); //8 bits
-    // mm_write(&REGS_AUX->AUX_MU_MCR, 0);
-    // mm_write(&REGS_AUX->AUX_MU_IER, 0);
-    // mm_write(&REGS_AUX->AUX_MU_IIR, 0xC6); //disable interrupts
-    // mm_write(&REGS_AUX->AUX_MU_BAUD, AUX_MU_BAUD_RATE(115200));
-
-
-    
-    // mm_write(&REGS_AUX->AUX_MU_CNTL, 3); //enable RX/TX
-    REGS_AUX->AUX_MU_CNTL =3;
+    delay(150);
+    REGS_AUX->AUX_MU_CNTL =3;   //enables RX/TX
 
     uart_writeByte('\r');
     uart_writeByte('\n');
@@ -62,10 +55,14 @@ void uart_write(char *buffer){
 
 void uart_writeByte(char ch) {
     while (!(REGS_AUX->AUX_MU_LSR & 0x20)); 
+    
     REGS_AUX->AUX_MU_IO = ch;
 }
 
 void uart_putc(void *p, char c){
+    if(c == '\n'){
+        uart_writeByte('\r');
+    }
     uart_writeByte(c);
 }
 
