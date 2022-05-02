@@ -1,3 +1,4 @@
+.text
 .globl get_el
 get_el:
 	mrs x0, CurrentEL

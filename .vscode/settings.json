@@ -1,6 +1,8 @@
 {
     "files.associations": {
+        "*.S": "arm",
         "sstream": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "mini_uart.h": "c"
     }
 }

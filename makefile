@@ -7,7 +7,7 @@ BOOTMNT ?= /media/sasha/boot
 
 ARMGNU ?= aarch64-linux-gnu
 
-C_OPTIONS = -Wall -O2 -ffreestanding  -nostartfiles -mgeneral-regs-only -I include 
+C_OPTIONS = -Wall -ffreestanding  -nostartfiles -nostdlib -mgeneral-regs-only -I include 
 
 ASM_OPTIONS = -I include
 
@@ -47,5 +47,14 @@ kernel8.img: linker/linker.ld ${OBJ_FILES} #$(OFILES)
 	$(ARMGNU)-objcopy ${BUILD_DIR}/kernel8.elf -O binary kernel8.img
 	cp kernel8.img ${BOOTMNT}/kernel8.img
 	cp config.txt ${BOOTMNT}/config.txt
+	sync
 
+armstub/build/armstub_s.o: armstub/src/armstub.S
+	mkdir -p $(@D)
+	@echo hello
+	$(ARMGNU)-gcc $(C_OPTIONS) -MMD -c $< -o $@
 
+armstub: armstub/build/armstub_s.o
+	$(ARMGNU)-ld --section-start=.text=0 -o armstub/build/armstub.elf $<
+	$(ARMGNU)-objcopy armstub/build/armstub.elf -O binary armstub-new.bin
+	cp armstub-new.bin ${BOOTMNT}/armstub-new.bin

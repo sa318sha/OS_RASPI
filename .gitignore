@@ -52,3 +52,6 @@ Mkfile.old
 dkms.conf
 
 testing/
+build/
+kernel8.img
+armstub-new.bin
