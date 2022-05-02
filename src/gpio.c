@@ -1,7 +1,7 @@
 #include "peripherals/gpio.h"
 #include "util/common.h"
 #include "mm/basic_mm.h"
-#include "peripherals/io_addresses.h"
+#include "peripherals/addresses/io_addresses.h"
 
 #if defined(WAY1)
 //value offset will push teh

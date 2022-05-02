@@ -29,7 +29,8 @@ master_proc:  // We're on the main core!
     
     ldr x0, =SPSR_VALUE
     msr SPSR_EL3,x0 //holds the saved procces state for when an exception is taken to el3 //like arthimetic flags 
-    //in the saved process state teh exception level is el1
+    //in the saved process state teh exception level is el1 meaning when it returns from exception it goes to el1
+    
 
     adr x0, el1_entry
     msr ELR_EL3, x0

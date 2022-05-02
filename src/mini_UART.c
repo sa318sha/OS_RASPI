@@ -1,4 +1,4 @@
-#include "peripherals/aux_addresses.h"
+#include "peripherals/addresses/aux_addresses.h"
 #include "peripherals/mini_UART.h"
 #include "util/common.h"
 #include "mm/basic_mm.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "util/common.h"
-#include "peripherals/base_addresses.h"
+#include "peripherals/addresses/base_addresses.h"
 // #include "include/register_structs.h"
 
 #define GPIO_BASE (PBASE + 0x00200000)

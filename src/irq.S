@@ -1,4 +1,3 @@
-.text
 .globl irq_init_vectors
 irq_init_vectors:
     adr x0, vectors

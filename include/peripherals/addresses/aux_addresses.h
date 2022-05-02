@@ -1,7 +1,7 @@
 #pragma once
 
 #include "util/common.h"
-#include "peripherals/base_addresses.h"
+#include "peripherals/addresses/base_addresses.h"
 #define AUX_BASE (PBASE + 0x00215000)
 //mini UART
 struct AuxRegs {

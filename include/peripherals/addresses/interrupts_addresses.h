@@ -1,7 +1,7 @@
 #pragma once
 
 #include "util/common.h"
-#include "peripherals/base_addresses.h"
+#include "peripherals/addresses/base_addresses.h"
 
 #define ARMC_BASE       (PBASE + 0xb000)
 
@@ -23,6 +23,10 @@ struct ARM_C_IRQ_REGS{
 
 #define IRQ_ARMC_REGS ((struct ARM_C_IRQ_REGS *) (ARMC_BASE +0x200))
 enum VC_IRQ{
+    SYS_TIMER_0_IRQ = (1<<0),
+    SYS_TIMER_1_IRQ = (1<<1),
+    SYS_TIMER_2_IRQ = (1<<2),
+    SYS_TIMER_3_IRQ = (1<<3),
     AUX_IRQ = (1<<29), 
     ARM_IRQ = (1<<30),
 };

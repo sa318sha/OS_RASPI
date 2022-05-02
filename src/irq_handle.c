@@ -1,8 +1,8 @@
 #include "util/printf.h"
-#include "interrupts/irq.h"
+#include "peripherals/irq.h"
 #include "util/common.h"
-#include "peripherals/interrupts.h"
-#include "peripherals/aux_addresses.h"
+#include "peripherals/addresses/interrupts_addresses.h"
+#include "peripherals/addresses/aux_addresses.h"
 #include "peripherals/mini_UART.h"
 // #include "interrupts/interrupt_defines.h"
 
@@ -37,6 +37,8 @@ void enable_interrupt_controller(){
     //setting only the aux for now
     IRQ_ARMC_REGS->PROCESSOR[0].IRQ_SET_EN[0] = AUX_IRQ;
 }
+
+//method called when there is a irq interrupt that the interrupt controller allows
 void handle_irq(){
     u64 irq;
 
@@ -53,6 +55,13 @@ void handle_irq(){
         }
 
         }
+
+        if(irq & SYS_TIMER_1_IRQ){
+            irq &= ~(SYS_TIMER_1_IRQ);
+        }
+
+
+
     }
     
     
