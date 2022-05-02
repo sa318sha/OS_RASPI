@@ -13,7 +13,7 @@ void uart_init(){
     gpio_pin_set_func(RXD_mini_UART,GFAlt5);
     gpio_pin_resistor_enable(TXD_mini_UART,GPNORES);
     gpio_pin_resistor_enable(RXD_mini_UART,GPNORES);
-
+    
 
     REGS_AUX->AUX_ENABLES =1;
     REGS_AUX->AUX_MU_CNTL =0;
