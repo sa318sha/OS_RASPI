@@ -73,3 +73,16 @@ char uart_readByte(){
     // }
     return (REGS_AUX->AUX_MU_IO & 0xFF);
 }
+
+void handle_uart(){
+    // printf("AUX_IRQ register: %X\n", REGS_AUX->AUX_IRQ);
+    // printf("interruptstatus byte: %X\n",(REGS_AUX->AUX_MU_IIR & 0xF));
+    while((REGS_AUX->AUX_MU_IIR & 4)==4 ){//status register to check if there is a byte pending
+            printf("UART RECIEVED: ");
+            uart_writeByte((char)uart_readByte());
+            printf("\n");
+        }
+    // printf("AUX_IRQ register: %X\n", REGS_AUX->AUX_IRQ);
+    
+    // printf("interruptstatus byte: %X\n",(REGS_AUX->AUX_MU_IIR & 0xF));
+}

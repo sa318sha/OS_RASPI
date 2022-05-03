@@ -3,6 +3,8 @@
         "*.S": "arm",
         "sstream": "c",
         "common.h": "c",
-        "mini_uart.h": "c"
+        "mini_uart.h": "c",
+        "base_addresses.h": "c",
+        "system_timer_addresses.h": "c"
     }
 }

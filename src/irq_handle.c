@@ -1,9 +1,10 @@
 #include "util/printf.h"
-#include "peripherals/irq.h"
 #include "util/common.h"
 #include "peripherals/addresses/interrupts_addresses.h"
 #include "peripherals/addresses/aux_addresses.h"
+#include "peripherals/irq.h"
 #include "peripherals/mini_UART.h"
+#include "peripherals/system_timer.h"
 // #include "interrupts/interrupt_defines.h"
 
 const static char ERROR_MESSAGES[16][32] = {
@@ -35,7 +36,7 @@ void show_invalid_entry_message(u64 type, u64 status, u64 address){
 void enable_interrupt_controller(){
 
     //setting only the aux for now
-    IRQ_ARMC_REGS->PROCESSOR[0].IRQ_SET_EN[0] = AUX_IRQ;
+    IRQ_ARMC_REGS->PROCESSOR[0].IRQ_SET_EN[0] = AUX_IRQ | SYS_TIMER_1_IRQ;
 }
 
 //method called when there is a irq interrupt that the interrupt controller allows
@@ -46,18 +47,13 @@ void handle_irq(){
     printf("IRQ VALUES: %X\n",irq);
     while(irq){
         if(irq & AUX_IRQ){
-        irq &= ~AUX_IRQ;
-        printf("recieved byte: %X",(REGS_AUX->AUX_MU_IO & 0xFF));
-        while((REGS_AUX->AUX_MU_IIR & 4)==4 ){
-            printf("UART RECIEVED: ");
-            uart_writeByte(uart_readByte());
-            printf("\n");
-        }
-
+            irq &= ~AUX_IRQ;
+            handle_uart();
         }
 
         if(irq & SYS_TIMER_1_IRQ){
             irq &= ~(SYS_TIMER_1_IRQ);
+            handle_timer_1();
         }
 
 

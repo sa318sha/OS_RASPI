@@ -1,4 +1,4 @@
-#include "interrupts/interrupt_defines.h"
+#include "peripherals/interrupt_defines.h"
 
 
 .macro handle_invalid_entry type

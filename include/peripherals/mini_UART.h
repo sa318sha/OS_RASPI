@@ -19,3 +19,4 @@ void uart_putc(void *p, char c);
 void uart_writeByte(char ch);
 char uart_readByte();
 
+void handle_uart();
